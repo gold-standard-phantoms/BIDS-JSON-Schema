@@ -1,0 +1,176 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "a/path/asl_schema.json",
+	
+	"type": "object",
+	
+	"properties": {
+		"EchoTime": {
+			"type": "number",
+			"minimum": 0
+		},
+		"MagneticFieldStrength": {
+			"type": "number",
+			"minimum": 0
+		},
+		"RepetitionTime": {
+			"type": "number",
+			"minimum": 0
+		},
+		"Manufacturer": {
+			"type": "string",
+			"enum": ["Philips", "GE", "Siemens"]
+		},
+		"PulseSequenceType": {
+			"type": "string",
+			"enum": ["2D", "3D", "2D EPI", "3D GRASE", "3D spiral"]
+		},
+		"SliceTiming": {
+			"type": "number",
+			"minimum": 0
+		},
+		"FlipAngle": {"type": "number"},
+		"EffectiveEchoSpacing": {
+			"type": "number",
+			"minimum": 0
+		},
+		"Units": {"type": "string"},
+		"ASLContext": {
+			"type": "string",
+			"enum": ["CBF", "MZeroScan", "DeltaM_MZeroScan", "Control_Label", "Label_Control", "MZeroScan_Control_Label", "MZeroScan_Label_Control", "MZeroScan_MZeroScan_Control_Label", "MZeroScan_MZeroScan_Label_Control"]
+		},
+		"LabelingType": {
+			"type": "string",
+			"enum": ["PASL", "CASL", "PCASL"]
+		},
+		"LabelingDuration": {
+			"oneOf": [
+				{"type": "number", "minimum": 0},
+				{
+					"type": "array",
+					"items": {
+						"type": "number",
+						"minimum": 0
+					}
+				}
+			]
+		},
+		"InitialPostLabelDelay": {
+			"oneOf": [
+				{"type": "number", "minimum": 0},
+				{
+					"type": "array",
+					"items": {
+						"type": "number",
+						"minimum": 0
+					}
+				}
+			]
+		},
+		"BackgroundSuppression": {"type": "boolean"},
+		"VascularCrushing": {"type": "boolean"},
+		"M_ZERO": {"type": "string"},
+		"MRSoftwareVersion": {"type": "string"},
+		"LabelingLocation": {"type": "string"},
+		"LabelingOrientation": {
+			"type": "array",
+			"minItems": 3,
+			"maxItems": 3,
+			"items": {
+				"type": "array",
+				"minItems": 2,
+				"maxItems": 2,
+				"items": [{"type": "number"}, {"type": "number"}]
+			}
+		},
+		"LabelingDistance": {
+			"type": "number",
+			"minimum": 0
+		},
+		"AverageLabelingGradient": {"type": "number"},
+		"Slice-selectiveLabelingGradent": {"type": "number"},
+		"FlipAngleOfB1LabelingPulses": {"type": "number"},
+		"LocationOfLabelingPlane": {
+			"type": "array",
+			"minItems": 3,
+			"maxItems": 3,
+			"items": {
+				"type": "array",
+				"minItems": 2,
+				"maxItems": 2,
+				"items": [{"type": "number"}, {"type": "number"}]
+			}
+		},
+		"LabelingSlabThickness": {
+			"type": "number",
+			"minimum": 0
+		},
+		"AcquisitionResolution": {
+			"type": "number",
+			"minimum": 0
+		},
+		"AcquisitionDuration": {
+			"type": "number",
+			"minimum": 0
+		},
+		"BackgroundSuppressionPulseTime": {
+			"type": "array",
+			"items": {
+				"type": "number",
+				"minimum": 0
+			}
+		},
+		"VascularCrushingVenc": {
+			"oneOf": [
+				{"type": "number"},
+				{
+					"type": "array",
+					"items": {"type": "number"}
+				}
+			]
+		},
+		"FlipAngles": {
+			"type": "array",
+			"items": {"type": "number"}
+		},
+		"PCASLType": {
+			"type": "string",
+			"enum": ["Balanced", "unbalanced"]
+		},
+		"LookLocker": {"type": "boolean"},
+		"PulseDuration": {"type": "number"},
+		"InterPulseSpacing": {"type": "number"},
+		"LabelingEfficiency": {"type": "number"},
+		"BolusCut-offFlag": {"type": "boolean"},
+		"BolusCut-offTimingSequence": {
+			"type": "number",
+			"minimum": 0
+		},
+		"BolusCut-offDelayTime": {
+			"type": "number",
+			"minimum": 0
+		},
+		"BolusCut-offTechnique": {"type": "string"},
+	},
+	
+	"required": ["EchoTime", "MagneticFieldStrength", "RepetitionTime", "PulseSequenceType", "ASLContext", "LabelingDuration", "InitialPostLabelDelay", "LabelingType", "BackgroundSuppression", "VascularCrushing", "M_ZERO"],
+	
+	"dependencies": {
+		"if": {
+			"properties": { "BolusCut-offFlag": { "const": true } }
+		},
+		"then": {
+			"BolusCut-offFlag": {
+				"required": ["BolusCut-offTimingSequence", "BolusCut-offDelayTime", "BolusCut-offTechnique"]
+			}
+		},
+		"if": {
+			"properties": { "VascularCrushing": { "const": true } }
+		},
+		"then": {
+			"BolusCut-offFlag": {
+				"required": ["VascularCrushingVenc"]
+			}
+		}
+	}
+}
