@@ -1,4 +1,4 @@
-{
+﻿{
 	"EchoTime": 7,
 	"MagneticFieldStrength": 0.15,
 	"RepetitionTime": 3,
@@ -37,5 +37,5 @@
 	"BolusCut-offFlag": true,
 	"BolusCut-offDelayTime": 3,
 	"BolusCut-offTimingSequence": 1,
-	"BolusCut-offTechnique": "went random on this one!",
+	"BolusCut-offTechnique": "went random on this one!"
 }
