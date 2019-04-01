@@ -1,16 +1,19 @@
 import json
 import pytest
+import os
+
+from definitions import SRC_ROOT
 from jsonschema import validate, ValidationError
 
 
 @pytest.fixture()
 def test_variables():
-    asl_valid_full = "schemas/tests_jsons/asl_valid/test_asl_schema001.json"
-    asl_valid_absent_conditional_field = "schemas/tests_jsons/asl_valid/test_asl_schema002.json"
-    asl_valid_labeling_duration_array = "schemas/tests_jsons/asl_valid/test_asl_schema003.json"
+    test_variables = {"asl_valid_full": os.path.join(SRC_ROOT, "resources/schemas/tests_jsons/asl_valid/test_asl_schema001.json"),
+                      "asl_valid_absent_conditional_field": os.path.join(SRC_ROOT, "resources/schemas/tests_jsons/asl_valid/test_asl_schema002.json"),
+                      "asl_valid_labeling_duration_array": os.path.join(SRC_ROOT, "resources/schemas/tests_jsons/asl_valid/test_asl_schema003.json"),
+                      "asl_schema": os.path.join(SRC_ROOT, "resources/schemas/asl_schema.json")}
 
-    asl_schema = "schemas/asl_schema.json"
-    return locals()
+    return test_variables
 
 
 def test_valid_data_all_fields_specified(test_variables):
