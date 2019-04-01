@@ -1,4 +1,4 @@
-﻿{
+{
 	"EchoTime": 7,
 	"MagneticFieldStrength": 0.15,
 	"RepetitionTime": 3,
@@ -26,7 +26,7 @@
 	"LabelingSlabThickness": 13,
 	"AcquisitionResolution": 120,
 	"AcquisitionDuration": 50,
-	"BackgroundSuppressionPulseTime": 16,
+	"BackgroundSuppressionPulseTime": [16],
 	"VascularCrushingVenc": [0,0,1,7],
 	"FlipAngles": [0,"yeah messing around",14,60],
 	"PCASLType": "Balanced",

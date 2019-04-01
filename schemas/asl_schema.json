@@ -228,22 +228,20 @@
 	
 	"required": ["EchoTime", "MagneticFieldStrength", "RepetitionTime", "PulseSequenceType", "ASLContext", "LabelingDuration", "InitialPostLabelDelay", "LabelingType", "BackgroundSuppression", "VascularCrushing", "M_ZERO"],
 	
-	"dependencies": {
-		"if": {
-			"properties": { "BolusCut-offFlag": { "const": true } }
-		},
-		"then": {
-			"BolusCut-offFlag": {
-				"required": ["BolusCut-offTimingSequence", "BolusCut-offDelayTime", "BolusCut-offTechnique"]
-			}
-		},
-		"if": {
-			"properties": { "VascularCrushing": { "const": true } }
-		},
-		"then": {
-			"BolusCut-offFlag": {
-				"required": ["VascularCrushingVenc"]
-			}
+	"if": {
+		"properties": { "BolusCut-offFlag": { "const": true } }
+	},
+	"then": {
+		"dependencies": {
+			"BolusCut-offFlag": ["BolusCut-offTimingSequence", "BolusCut-offDelayTime", "BolusCut-offTechnique"]
+		}
+	},
+	"if": {
+		"properties": { "VascularCrushing": { "const": true } }
+	},
+	"then": {
+		"dependencies": {
+			"VascularCrushing": ["VascularCrushingVenc"]
 		}
 	}
 }
