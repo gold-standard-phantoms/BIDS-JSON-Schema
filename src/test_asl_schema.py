@@ -22,7 +22,7 @@ def set_test_variables():
         "asl_valid_labeling_duration_array": os.path.join(
             SRC_ROOT, "resources/schemas/tests_jsons/asl_valid/test_asl_schema003.json"
         ),
-        "asl_schema": os.path.join(SRC_ROOT, "resources/schemas/asl_schema.json"),
+        "asl_schema": os.path.join(SRC_ROOT, "resources/schemas/asl_bids_schema.json"),
     }
 
     return test_variables
