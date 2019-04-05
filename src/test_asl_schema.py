@@ -7,7 +7,11 @@ from jsonschema import Draft7Validator
 
 
 @pytest.fixture()
-def test_variables():
+def set_test_variables():
+    """
+    Sets up variables for the unit tests below.
+    :return: dictionary of test input variables for the unit tests.
+    """
     test_variables = {
         "asl_valid_full": os.path.join(
             SRC_ROOT, "resources/schemas/tests_jsons/asl_valid/test_asl_schema001.json"
@@ -24,18 +28,18 @@ def test_variables():
     return test_variables
 
 
-def test_valid_data_all_fields_specified(test_variables):
+def test_valid_data_all_fields_specified(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-001
-    :description: This tests verify that a valid structure following exactly the definition set in the json schema gets
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that a valid structure following exactly the definition set in the json schema gets
     validated correctly.
     :inputs: A dictionary object following exactly the structure defined in the asl schema, with all fields mandatory and
     optional specified.
     :criteria: This test is considered passed if the validation method returns True.
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_full"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_full"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
@@ -48,17 +52,17 @@ def test_valid_data_all_fields_specified(test_variables):
     assert valid is True
 
 
-def test_valid_data_missing_conditional_field(test_variables):
+def test_valid_data_missing_conditional_field(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-002
-    :description: This tests verify that a valid structure following the definition set in the json schema gets validated
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that a valid structure following the definition set in the json schema gets validated
     correctly.
     :inputs: A dictionary object following exactly the structure defined in the asl schema but missing a conditional field.
     :criteria: This test is considered passed if the validation method returns True.
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_absent_conditional_field"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_absent_conditional_field"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
@@ -71,19 +75,19 @@ def test_valid_data_missing_conditional_field(test_variables):
     assert valid is True
 
 
-def test_valid_data_conditional_type_array(test_variables):
+def test_valid_data_conditional_type_array(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-003
-    :description: This tests verify that a valid structure following the definition set in the json schema gets
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that a valid structure following the definition set in the json schema gets
     validated correctly.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The twist here is the
     LabelingDuration field is an array instead of a single int, as this is allowed in the schema this should not affect
     the validation.
     :criteria: This test is considered passed if the validation method returns True.
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_labeling_duration_array"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_labeling_duration_array"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
@@ -96,17 +100,17 @@ def test_valid_data_conditional_type_array(test_variables):
     assert valid is True
 
 
-def test_invalid_data_wrong_field_type(test_variables):
+def test_invalid_data_wrong_field_type(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-004
-    :description: This tests verify that an invalid structure does not get validated against our schema.
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
     field identified as an array in the schema is replaced by a single numeric value.
     :criteria: This test is considered passed if the validation method returns False.
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_full"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_full"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
@@ -123,17 +127,17 @@ def test_invalid_data_wrong_field_type(test_variables):
     assert valid is False
 
 
-def test_invalid_data_missing_required_key(test_variables):
+def test_invalid_data_missing_required_key(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-005
-    :description: This tests verify that an invalid structure does not get validated against our schema.
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
     field identified as required in the schema is omitted.
     :criteria: This test is considered passed if the validation method returns False.
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_full"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_full"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
@@ -150,17 +154,17 @@ def test_invalid_data_missing_required_key(test_variables):
     assert valid is False
 
 
-def test_invalid_data_wrong_type_in_array(test_variables):
+def test_invalid_data_wrong_type_in_array(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-006
-    :description: This tests verify that an invalid structure does not get validated against our schema.
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
     field identified as an array of numbers in the schema is replaced by an array containing numbers and a string.
     :criteria: This test is considered passed if the validation method returns False.
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_full"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_full"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
@@ -177,18 +181,18 @@ def test_invalid_data_wrong_type_in_array(test_variables):
     assert valid is False
 
 
-def test_invalid_data_unexpected_field_value(test_variables):
+def test_invalid_data_unexpected_field_value(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-007
-    :description: This tests verify that an invalid structure does not get validated against our schema.
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
     field whose possible values are set in an enumeration in the schema is set to an unexpected (not part of the
     enumeration) value.
     :criteria: This test is considered passed if the validation method returns False.
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_full"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_full"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
@@ -205,17 +209,17 @@ def test_invalid_data_unexpected_field_value(test_variables):
     assert valid is False
 
 
-def test_invalid_data_wrong_array_size(test_variables):
+def test_invalid_data_wrong_array_size(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-008
-    :description: This tests verify that an invalid structure does not get validated against our schema.
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
     field identified as an array in the schema is set to an array of the wrong size.
     :criteria: This test is considered passed if the validation method returns False.
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_full"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_full"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
@@ -232,17 +236,17 @@ def test_invalid_data_wrong_array_size(test_variables):
     assert valid is False
 
 
-def test_invalid_data_wrong_internal_array_size(test_variables):
+def test_invalid_data_wrong_internal_array_size(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-009
-    :description: This tests verify that an invalid structure does not get validated against our schema.
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
     field identified as an array in the schema is set to an array with an inner element of the wrong size.
     :criteria: This test is considered passed if the validation method returns False.
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_full"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_full"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
@@ -259,18 +263,18 @@ def test_invalid_data_wrong_internal_array_size(test_variables):
     assert valid is False
 
 
-def test_invalid_data_multiple_errors(test_variables):
+def test_invalid_data_multiple_errors(set_test_variables):
     """
-    :req_id: D2N-FUN-REQ-003
     :test_id: ASL-SCHEMA-010
-    :description: This tests verify that an invalid structure does not get validated against our schema.
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The object gathers all the
     mistakes tested previously.
     :criteria: This test is considered passed if the validation method returns False. and the number of errors is
     correctly estimated (6)
     """
-    asl_schema = test_variables["asl_schema"]
-    asl_valid = test_variables["asl_valid_full"]
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_full"]
 
     with open(asl_schema, "r") as fp:
         schema = json.load(fp, encoding="utf-8")
