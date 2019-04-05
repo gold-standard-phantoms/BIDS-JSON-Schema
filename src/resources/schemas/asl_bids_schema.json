@@ -1,286 +1,347 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
-	"$id": "https://git.goldstandardphantoms.com/GSP/software/bids-json-schema/blob/master/src/resources/schemas/asl_schema.json",
-	"title": "Schema for ASL BIDS extension (BEP005) data",
-	"description": "Author: Gold Standard Phantoms\nVersion Number: 0.1\nLicense: MIT - Copyright 2019 Gold Standard Phantoms Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\nURL: https://git.goldstandardphantoms.com/GSP/software/bids-json-schema/blob/master/src/resources/schemas/asl_schema.json",
-	
-	"type": "object",
-	
-	"properties": {
-		"EchoTime": {
-			"type": "number",
-			"title": "Echo Time",
-			"description": "REQUIRED. (s) Influences quantification, should be identical for ASL & M0, if a separate M0 volume is used for quantification.",
-			"minimum": 0
-		},
-		"MagneticFieldStrength": {
-			"type": "number",
-			"title": "Magnetic Field Strength",
-			"description": "REQUIRED. Required for quantification, to infer default values for blood/tissue T1 (and T2, T2*).",
-			"minimum": 0
-		},
-		"RepetitionTime": {
-			"type": "number",
-			"title": "Repetition Time",
-			"description": "REQUIRED. (s) Reference for temporal resolution/variability and for correcting the MeanControl image, if it is used as pseudo-M0, in case of the M0 field is set to ‘Control’.",
-			"minimum": 0
-		},
-		"Manufacturer": {
-			"type": "string",
-			"title": "Manufacturer",
-			"description": "RECOMMENDED. May reflect site differences in multi-site study (especially readout differences, but perhaps also labeling differences).",
-			"enum": ["Philips", "GE", "Siemens"]
-		},
-		"PulseSequenceType": {
-			"type": "string",
-			"title": "Pulse Sequence Type",
-			"description": "REQUIRED. 2D or 3D, 2D EPI or 3D GRASE (Philips), 3D spiral (GE) or 3D GRASE (Siemens). Siemens 3D spiral also exists, as well as 2D EPI for all vendors, but these are less frequently used.",
-			"enum": ["2D", "3D", "2D EPI", "3D GRASE", "3D spiral"]
-		},
-		"SliceTiming": {
-			"type": "number",
-			"title": "Slice Timing",
-			"description": "RECOMMENDED. (s) This field is mandatory in case of a 2D acquisition, and contains the time it takes to read out a single slice. Although most ASL sequences are acquired inferior-superior, the slice acquisition order can differ. This field is also used to calculate the effective slice-wise PLD, which is the addition of the InitialPostLabelDelay (see below) and the SliceTiming for the respective slice. In the quantification, this parameter should be used as SliceTiming*(z-1) with z the number of the current slice.",
-			"minimum": 0
-		},
-		"FlipAngle": {
-			"type": "number",
-			"title": "Flip Angle",
-			"description": "RECOMMENDED. This field is usually not required for quantification, but it needs to be checked whether this is the same for the ASL source images and M0. This field is mandatory for ASL-sequences with multiple FlipAngles (e.g. (turbo-)QUASAR), which requires a vector at field “FlipAngles” see below."
-		},
-		"EffectiveEchoSpacing": {
-			"type": "number",
-			"title": "Effective Echo Spacing",
-			"description": "OPTIONAL. Determines geometric distortion (see 8.4 task), recommended for sequences susceptible to geometric distortion such as 2D EPI and 3D GRASE.",
-			"minimum": 0
-		},
-		"Units": {
-			"type": "string",
-			"title": "Units",
-			"description": "OPTIONAL. In case the DeltaM and CBF is provided as rawdata, the measurement unit should be specified."
-			},
-		"ASLContext": {
-			"type": "string",
-			"title": "ASL Context",
-			"enum": ["CBF", "MZeroScan", "DeltaM_MZeroScan", "Control_Label", "Label_Control", "MZeroScan_Control_Label", "MZeroScan_Label_Control", "MZeroScan_MZeroScan_Control_Label", "MZeroScan_MZeroScan_Label_Control"],
-			"description": "REQUIRED. String containing any combination of ‘Control’ ‘Label’ ‘MZeroScan’ ‘DeltaM’ ‘CBF’ as clarified above. Based on to DICOM Tag ASL Context (0018,9257))."
-		},
-		"LabelingType": {
-			"type": "string",
-			"title": "Labeling Type",
-			"enum": ["PASL", "CASL", "PCASL"],
-			"description": "REQUIRED. ‘PASL’ (pulsed ASL), ‘CASL’ (continuous ASL), ‘PCASL’ (pseudocontinuous ASL). Note that pseudo-continuous ASL (PCASL) is a modification of CASL, and uses the same quantification. Nevertheless, to avoid confusion, we keep both names. ‘VSS” (Velocity selective saturation) or ‘VSI’ (velocity selective inversion)."
-		},
-		"LabelingDuration": {
-			"title": "Labeling Duration",
-			"description": "REQUIRED. (s). Duration of the labeling (temporal width of the labeling bolus for pCASL and CASL). Corresponds to DICOM Tag ASL Pulse Train Duration (0018,9258). Specify either one value for total timeseries, provide a vector for different values for each volume (for sequential acquisitions where the labeling duration varies). Parameters of bolus saturation and bolus width for PASL is given in BolusCut-Off fields.",
-			"oneOf": [
-				{"type": "number", "minimum": 0},
-				{
-					"type": "array",
-					"items": {
-						"type": "number",
-						"minimum": 0
-					}
-				}
-			]
-		},
-		"InitialPostLabelDelay": {
-			"title": "Initial Post-Label Delay",
-			"description": "REQUIRED. (s) Corresponds to DICOM Tag Inversion Times (0018,9079). In case of 3D, this is the PLD to the excitation of the 3D volume. In case of 2D multi-slice, this is the PLD to the excitation of first slice. In case of multi-PLD, this is a vector of initial PLDs.",
-			"oneOf": [
-				{"type": "number", "minimum": 0},
-				{
-					"type": "array",
-					"items": {
-						"type": "number",
-						"minimum": 0
-					}
-				}
-			]
-		},
-		"BackgroundSuppression": {
-			"type": "boolean",
-			"title": "Background Suppression",
-			"description": "REQUIRED. (True/False)."
-		},
-		"VascularCrushing": {
-			"type": "boolean",
-			"title": "Vascular Crushing",
-			"description": "REQUIRED. (True/False) Indicates if an ASL Crusher Method has been used. Follows DICOM Tag ASL Crusher Flag (0018,9259)."
-		},
-		"MZERO": {
-			"type": "string",
-			"title": "M0",
-			"description": "REQUIRED. This field can be either: Numerical - value: a single numerical whole-brain M0 value (e.g. obtained from the CSF in another sequence); Control: In the absence of background suppression, the (average) control image can be used as M0 image in post-processing; SeparateFile - path: M0 image filename: containing the path to each separately acquired M0 image (corresponding to the ‘ASL Contenxt’ key); WithinASL - value (VolumeNumber): M0 image acquired within ASL sequence: volumes numbers within ASL4D.nii (corresponding to the ‘ASL Contenxt’ key)"
-		},
-		"MRSoftwareVersion": {
-			"type": "string",
-			"title": "MR Software Version",
-			"description": "RECOMMENDED. Basic software version information may be present in other DICOM fields (e.g. “HardcopyDeviceSoftwareVersion” and “ImplementationVersionName”), but any additional information (e.g. about the specific version of the ASL sequence) could be added here to reveal subtle sequence changes that have occurred while updating scanner software throughout a clinical study."
-		},
-		"LabelingLocation": {
-			"type": "string",
-			"title": "Labeling Location",
-			"description": "RECOMMENDED. Hints on labeling efficiency and labeling symmetry, which can be used for QC. Preferably link to an anonymized  JPG containing screenshot of labeling planning. Per DICOM macro C.8.13.5.14"
-		},
-		"LabelingOrientation": {
-			"type": "array",
-			"title": "Labeling Orientation",
-			"description": "RECOMMENDED. Orientation of the labeling plane or slab. Per DICOM macro C.8.13.5.14",
-			"minItems": 3,
-			"maxItems": 3,
-			"items": {
-				"type": "array",
-				"minItems": 2,
-				"maxItems": 2,
-				"items": [{"type": "number"}, {"type": "number"}]
-			}
-		},
-		"LabelingDistance": {
-			"type": "number",
-			"title": "Labeling Distance",
-			"description": "RECOMMENDED. Effective distance of the labeling plane from isocentre along the direction normal to the labeling plane/slab, as defined by “LabelingOrientation”. For pCASL and CASL, this is the center of labeling plane; for PASL the edge of the labeling slab. Per DICOM macro C.8.13.5.14",
-			"minimum": 0
-		},
-		"AverageLabelingGradient": {
-			"type": "number",
-			"title": "Average Labeling Gradient",
-			"description": "RECOMMENDED. For PCASL, could explain systematic differences between sites (also included in COBIDAS). Per DICOM macro C.8.13.5.14"
-		},
-		"Slice-selectiveLabelingGradent": {
-			"type": "number",
-			"title": "Slice-selective Labeling Gradient",
-			"description": "RECOMMENDED. For PCASL and PASL, could explain systematic differences between sites (also included in COBIDAS)."
-		},
-		"FlipAngleOfB1LabelingPulses": {
-			"type": "number",
-			"title": "Flip Angle of B1 Labeling Pulses",
-			"description": "RECOMMENDED. For PCASL, could explain systematic differences between sites (also included in COBIDAS)."
-		},
-		"LocationOfLabelingPlane": {
-			"type": "array",
-			"title": "Location of Labeling Plane",
-			"description": "RECOMMENDED. For PCASL, could explain systematic differences between sites (also included in COBIDAS). Per DICOM macro C.8.13.5.14",
-			"minItems": 3,
-			"maxItems": 3,
-			"items": {
-				"type": "array",
-				"minItems": 2,
-				"maxItems": 2,
-				"items": [{"type": "number"}, {"type": "number"}]
-			}
-		},
-		"LabelingSlabThickness": {
-			"type": "number",
-			"title": "labeling Slab Thickness",
-			"description": "RECOMMENDED. For PASL, could explain systematic differences between sites (also included in COBIDAS). Per DICOM macro C.8.13.5.14",
-			"minimum": 0
-		},
-		"AcquisitionResolution": {
-			"type": "number",
-			"title": "Acquisition Resolution",
-			"description": "RECOMMENDED. (mm) The nominal acquisition resolution is important for evaluation of regional CBF. The acquired volumes can be upsampled before storing for both Cartesian and non-Cartesian acquisitions.",
-			"minimum": 0
-		},
-		"AcquisitionDuration": {
-			"type": "number",
-			"title": "Acquisition Duration",
-			"description": "RECOMMENDED. (s). The duration of the ASL acquisition in seconds.",
-			"minimum": 0
-		},
-		"BackgroundSuppressionPulseTime": {
-			"type": "array",
-			"title": "Background Suppression Pulse Time",
-			"description": "OPTIONAL. (s, vector), contains timing of background suppression pulses before the start of readout, required if BackgroundSuppression = True. The length of the vector equals to the number of background suppression pulses.",
-			"items": {
-				"type": "number",
-				"minimum": 0
-			}
-		},
-		"VascularCrushingVenc": {
-			"title": "vascular Crushing Venc / ASL Crusher Flow Limit",
-			"description": "OPTIONAL. (cm/s), required if VascularCrushing = True. Can also be a vector (as in QUASAR). Corresponds to DICOM Tag ASL Crusher Flow Limit (0018,925A).",
-			"oneOf": [
-				{"type": "number"},
-				{
-					"type": "array",
-					"items": {"type": "number"}
-				}
-			]
-		},
-		"FlipAngles": {
-			"type": "array",
-			"title": "Flip Angles",
-			"description": "OPTIONAL. Extension of the existing FlipAngle field, in case of multiple FlipAngles, e.g. (turbo-)QUASAR.",
-			"items": {"type": "number"}
-		},
-		"PCASLType": {
-			"type": "string",
-			"title": "PCASL Type",
-			"description": "OPTIONAL. Balanced/unbalanced.",
-			"enum": ["Balanced", "unbalanced"]
-		},
-		"LookLocker": {
-			"type": "boolean",
-			"title": "Look Locker",
-			"description": "OPTIONAL. (True/False)."
-		},
-		"PulseDuration": {
-			"type": "number",
-			"title": "Pulse Duration",
-			"description": "OPTIONAL. (s). For PCASL."
-		},
-		"InterPulseSpacing": {
-			"type": "number",
-			"title": "Inter Pulse Spacing",
-			"description": "OPTIONAL. (s). For PCASL."
-		},
-		"LabelingEfficiency": {
-			"type": "number",
-			"title": "Labeling Efficiency",
-			"description": "OPTIONAL. May be used if the labeling efficiency was estimated, or if a generally accepted value is available for the specific protocol used."
-		},
-		"BolusCut-offFlag": {
-			"type": "boolean",
-			"title": "Bolus Cut-off Flag",
-			"description": "OPTIONAL. (True/False) For PASL (DICOM tag (0018,925C))."
-		},
-		"BolusCut-offTimingSequence": {
-			"type": "number",
-			"title": "Bolus Cut-off Timing Sequence",
-			"description": "REQUIRED if BolusCut-offFlag True. (s) For PASL (DICOM tag (0018,925D)). Start of the bolus cut off saturation pulse after the labeling.",
-			"minimum": 0
-		},
-		"BolusCut-offDelayTime": {
-			"type": "number",
-			"title": "Bolus Cut-off Delay Time",
-			"description": "REQUIRED if BolusCut-offFlag True. (s) For PASL (DICOM tag (0018,925F)). Duration of the bolus cut off saturation pulse.",
-			"minimum": 0
-		},
-		"BolusCut-offTechnique": {
-			"type": "string",
-			"title": "Bolus Cut-off Technique",
-			"description": "REQUIRED if BolusCut-offFlag True. For PASL (DICOM tag (0018,925E)). Name of the technique used."
-		}
-	},
-	
-	"required": ["EchoTime", "MagneticFieldStrength", "RepetitionTime", "PulseSequenceType", "ASLContext", "LabelingDuration", "InitialPostLabelDelay", "LabelingType", "BackgroundSuppression", "VascularCrushing", "M_ZERO"],
-	
-	"if": {
-		"properties": { "BolusCut-offFlag": { "const": true } }
-	},
-	"then": {
-		"dependencies": {
-			"BolusCut-offFlag": ["BolusCut-offTimingSequence", "BolusCut-offDelayTime", "BolusCut-offTechnique"]
-		}
-	},
-	"if": {
-		"properties": { "VascularCrushing": { "const": true } }
-	},
-	"then": {
-		"dependencies": {
-			"VascularCrushing": ["VascularCrushingVenc"]
-		}
-	}
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id":
+    "https://git.goldstandardphantoms.com/GSP/software/bids-json-schema/blob/master/src/resources/schemas/asl_schema.json",
+  "title": "Schema for ASL BIDS extension (BEP005) data",
+  "description":
+    "Author: Gold Standard Phantoms\nVersion Number: 0.1\nLicense: MIT - Copyright 2019 Gold Standard Phantoms Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.\nURL: https://git.goldstandardphantoms.com/GSP/software/bids-json-schema/blob/master/src/resources/schemas/asl_schema.json",
+
+  "type": "object",
+
+  "properties": {
+    "EchoTime": {
+      "type": "number",
+      "title": "Echo Time",
+      "description":
+        "REQUIRED. (s) Influences quantification, should be identical for ASL & M0, if a separate M0 volume is used for quantification.",
+      "minimum": 0
+    },
+    "MagneticFieldStrength": {
+      "type": "number",
+      "title": "Magnetic Field Strength",
+      "description":
+        "REQUIRED. Required for quantification, to infer default values for blood/tissue T1 (and T2, T2*).",
+      "minimum": 0
+    },
+    "RepetitionTime": {
+      "type": "number",
+      "title": "Repetition Time",
+      "description":
+        "REQUIRED. (s) Reference for temporal resolution/variability and for correcting the MeanControl image, if it is used as pseudo-M0, in case of the M0 field is set to ‘Control’.",
+      "minimum": 0
+    },
+    "Manufacturer": {
+      "type": "string",
+      "title": "Manufacturer",
+      "description":
+        "RECOMMENDED. May reflect site differences in multi-site study (especially readout differences, but perhaps also labeling differences).",
+      "enum": ["Philips", "GE", "Siemens"]
+    },
+    "PulseSequenceType": {
+      "type": "string",
+      "title": "Pulse Sequence Type",
+      "description":
+        "REQUIRED. 2D or 3D, 2D EPI or 3D GRASE (Philips), 3D spiral (GE) or 3D GRASE (Siemens). Siemens 3D spiral also exists, as well as 2D EPI for all vendors, but these are less frequently used.",
+      "enum": ["2D", "3D", "2D EPI", "3D GRASE", "3D spiral"]
+    },
+    "SliceTiming": {
+      "type": "number",
+      "title": "Slice Timing",
+      "description":
+        "RECOMMENDED. (s) This field is mandatory in case of a 2D acquisition, and contains the time it takes to read out a single slice. Although most ASL sequences are acquired inferior-superior, the slice acquisition order can differ. This field is also used to calculate the effective slice-wise PLD, which is the addition of the InitialPostLabelDelay (see below) and the SliceTiming for the respective slice. In the quantification, this parameter should be used as SliceTiming*(z-1) with z the number of the current slice.",
+      "minimum": 0
+    },
+    "FlipAngle": {
+      "type": "number",
+      "title": "Flip Angle",
+      "description":
+        "RECOMMENDED. This field is usually not required for quantification, but it needs to be checked whether this is the same for the ASL source images and M0. This field is mandatory for ASL-sequences with multiple FlipAngles (e.g. (turbo-)QUASAR), which requires a vector at field “FlipAngles” see below."
+    },
+    "EffectiveEchoSpacing": {
+      "type": "number",
+      "title": "Effective Echo Spacing",
+      "description":
+        "OPTIONAL. Determines geometric distortion (see 8.4 task), recommended for sequences susceptible to geometric distortion such as 2D EPI and 3D GRASE.",
+      "minimum": 0
+    },
+    "Units": {
+      "type": "string",
+      "title": "Units",
+      "description":
+        "OPTIONAL. In case the DeltaM and CBF is provided as rawdata, the measurement unit should be specified."
+    },
+    "ASLContext": {
+      "type": "string",
+      "title": "ASL Context",
+      "enum": [
+        "CBF",
+        "MZeroScan",
+        "DeltaM_MZeroScan",
+        "Control_Label",
+        "Label_Control",
+        "MZeroScan_Control_Label",
+        "MZeroScan_Label_Control",
+        "MZeroScan_MZeroScan_Control_Label",
+        "MZeroScan_MZeroScan_Label_Control"
+      ],
+      "description":
+        "REQUIRED. String containing any combination of ‘Control’ ‘Label’ ‘MZeroScan’ ‘DeltaM’ ‘CBF’ as clarified above. Based on to DICOM Tag ASL Context (0018,9257))."
+    },
+    "LabelingType": {
+      "type": "string",
+      "title": "Labeling Type",
+      "enum": ["PASL", "CASL", "PCASL"],
+      "description":
+        "REQUIRED. ‘PASL’ (pulsed ASL), ‘CASL’ (continuous ASL), ‘PCASL’ (pseudocontinuous ASL). Note that pseudo-continuous ASL (PCASL) is a modification of CASL, and uses the same quantification. Nevertheless, to avoid confusion, we keep both names. ‘VSS” (Velocity selective saturation) or ‘VSI’ (velocity selective inversion)."
+    },
+    "LabelingDuration": {
+      "title": "Labeling Duration",
+      "description":
+        "REQUIRED. (s). Duration of the labeling (temporal width of the labeling bolus for pCASL and CASL). Corresponds to DICOM Tag ASL Pulse Train Duration (0018,9258). Specify either one value for total timeseries, provide a vector for different values for each volume (for sequential acquisitions where the labeling duration varies). Parameters of bolus saturation and bolus width for PASL is given in BolusCut-Off fields.",
+      "oneOf": [
+        { "type": "number", "minimum": 0 },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      ]
+    },
+    "InitialPostLabelDelay": {
+      "title": "Initial Post-Label Delay",
+      "description":
+        "REQUIRED. (s) Corresponds to DICOM Tag Inversion Times (0018,9079). In case of 3D, this is the PLD to the excitation of the 3D volume. In case of 2D multi-slice, this is the PLD to the excitation of first slice. In case of multi-PLD, this is a vector of initial PLDs.",
+      "oneOf": [
+        { "type": "number", "minimum": 0 },
+        {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      ]
+    },
+    "BackgroundSuppression": {
+      "type": "boolean",
+      "title": "Background Suppression",
+      "description": "REQUIRED. (True/False)."
+    },
+    "VascularCrushing": {
+      "type": "boolean",
+      "title": "Vascular Crushing",
+      "description":
+        "REQUIRED. (True/False) Indicates if an ASL Crusher Method has been used. Follows DICOM Tag ASL Crusher Flag (0018,9259)."
+    },
+    "MZERO": {
+      "type": "string",
+      "title": "M0",
+      "description":
+        "REQUIRED. This field can be either: Numerical - value: a single numerical whole-brain M0 value (e.g. obtained from the CSF in another sequence); Control: In the absence of background suppression, the (average) control image can be used as M0 image in post-processing; SeparateFile - path: M0 image filename: containing the path to each separately acquired M0 image (corresponding to the ‘ASL Contenxt’ key); WithinASL - value (VolumeNumber): M0 image acquired within ASL sequence: volumes numbers within ASL4D.nii (corresponding to the ‘ASL Contenxt’ key)"
+    },
+    "MRSoftwareVersion": {
+      "type": "string",
+      "title": "MR Software Version",
+      "description":
+        "RECOMMENDED. Basic software version information may be present in other DICOM fields (e.g. “HardcopyDeviceSoftwareVersion” and “ImplementationVersionName”), but any additional information (e.g. about the specific version of the ASL sequence) could be added here to reveal subtle sequence changes that have occurred while updating scanner software throughout a clinical study."
+    },
+    "LabelingLocation": {
+      "type": "string",
+      "title": "Labeling Location",
+      "description":
+        "RECOMMENDED. Hints on labeling efficiency and labeling symmetry, which can be used for QC. Preferably link to an anonymized  JPG containing screenshot of labeling planning. Per DICOM macro C.8.13.5.14"
+    },
+    "LabelingOrientation": {
+      "type": "array",
+      "title": "Labeling Orientation",
+      "description":
+        "RECOMMENDED. Orientation of the labeling plane or slab. Per DICOM macro C.8.13.5.14",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": [{ "type": "number" }, { "type": "number" }]
+      }
+    },
+    "LabelingDistance": {
+      "type": "number",
+      "title": "Labeling Distance",
+      "description":
+        "RECOMMENDED. Effective distance of the labeling plane from isocentre along the direction normal to the labeling plane/slab, as defined by “LabelingOrientation”. For pCASL and CASL, this is the center of labeling plane; for PASL the edge of the labeling slab. Per DICOM macro C.8.13.5.14",
+      "minimum": 0
+    },
+    "AverageLabelingGradient": {
+      "type": "number",
+      "title": "Average Labeling Gradient",
+      "description":
+        "RECOMMENDED. For PCASL, could explain systematic differences between sites (also included in COBIDAS). Per DICOM macro C.8.13.5.14"
+    },
+    "Slice-selectiveLabelingGradent": {
+      "type": "number",
+      "title": "Slice-selective Labeling Gradient",
+      "description":
+        "RECOMMENDED. For PCASL and PASL, could explain systematic differences between sites (also included in COBIDAS)."
+    },
+    "FlipAngleOfB1LabelingPulses": {
+      "type": "number",
+      "title": "Flip Angle of B1 Labeling Pulses",
+      "description":
+        "RECOMMENDED. For PCASL, could explain systematic differences between sites (also included in COBIDAS)."
+    },
+    "LocationOfLabelingPlane": {
+      "type": "array",
+      "title": "Location of Labeling Plane",
+      "description":
+        "RECOMMENDED. For PCASL, could explain systematic differences between sites (also included in COBIDAS). Per DICOM macro C.8.13.5.14",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "array",
+        "minItems": 2,
+        "maxItems": 2,
+        "items": [{ "type": "number" }, { "type": "number" }]
+      }
+    },
+    "LabelingSlabThickness": {
+      "type": "number",
+      "title": "labeling Slab Thickness",
+      "description":
+        "RECOMMENDED. For PASL, could explain systematic differences between sites (also included in COBIDAS). Per DICOM macro C.8.13.5.14",
+      "minimum": 0
+    },
+    "AcquisitionResolution": {
+      "type": "number",
+      "title": "Acquisition Resolution",
+      "description":
+        "RECOMMENDED. (mm) The nominal acquisition resolution is important for evaluation of regional CBF. The acquired volumes can be upsampled before storing for both Cartesian and non-Cartesian acquisitions.",
+      "minimum": 0
+    },
+    "AcquisitionDuration": {
+      "type": "number",
+      "title": "Acquisition Duration",
+      "description":
+        "RECOMMENDED. (s). The duration of the ASL acquisition in seconds.",
+      "minimum": 0
+    },
+    "BackgroundSuppressionPulseTime": {
+      "type": "array",
+      "title": "Background Suppression Pulse Time",
+      "description":
+        "OPTIONAL. (s, vector), contains timing of background suppression pulses before the start of readout, required if BackgroundSuppression = True. The length of the vector equals to the number of background suppression pulses.",
+      "items": {
+        "type": "number",
+        "minimum": 0
+      }
+    },
+    "VascularCrushingVenc": {
+      "title": "vascular Crushing Venc / ASL Crusher Flow Limit",
+      "description":
+        "OPTIONAL. (cm/s), required if VascularCrushing = True. Can also be a vector (as in QUASAR). Corresponds to DICOM Tag ASL Crusher Flow Limit (0018,925A).",
+      "oneOf": [
+        { "type": "number" },
+        {
+          "type": "array",
+          "items": { "type": "number" }
+        }
+      ]
+    },
+    "FlipAngles": {
+      "type": "array",
+      "title": "Flip Angles",
+      "description":
+        "OPTIONAL. Extension of the existing FlipAngle field, in case of multiple FlipAngles, e.g. (turbo-)QUASAR.",
+      "items": { "type": "number" }
+    },
+    "PCASLType": {
+      "type": "string",
+      "title": "PCASL Type",
+      "description": "OPTIONAL. Balanced/unbalanced.",
+      "enum": ["Balanced", "unbalanced"]
+    },
+    "LookLocker": {
+      "type": "boolean",
+      "title": "Look Locker",
+      "description": "OPTIONAL. (True/False)."
+    },
+    "PulseDuration": {
+      "type": "number",
+      "title": "Pulse Duration",
+      "description": "OPTIONAL. (s). For PCASL."
+    },
+    "InterPulseSpacing": {
+      "type": "number",
+      "title": "Inter Pulse Spacing",
+      "description": "OPTIONAL. (s). For PCASL."
+    },
+    "LabelingEfficiency": {
+      "type": "number",
+      "title": "Labeling Efficiency",
+      "description":
+        "OPTIONAL. May be used if the labeling efficiency was estimated, or if a generally accepted value is available for the specific protocol used."
+    },
+    "BolusCut-offFlag": {
+      "type": "boolean",
+      "title": "Bolus Cut-off Flag",
+      "description": "OPTIONAL. (True/False) For PASL (DICOM tag (0018,925C))."
+    },
+    "BolusCut-offTimingSequence": {
+      "type": "number",
+      "title": "Bolus Cut-off Timing Sequence",
+      "description":
+        "REQUIRED if BolusCut-offFlag True. (s) For PASL (DICOM tag (0018,925D)). Start of the bolus cut off saturation pulse after the labeling.",
+      "minimum": 0
+    },
+    "BolusCut-offDelayTime": {
+      "type": "number",
+      "title": "Bolus Cut-off Delay Time",
+      "description":
+        "REQUIRED if BolusCut-offFlag True. (s) For PASL (DICOM tag (0018,925F)). Duration of the bolus cut off saturation pulse.",
+      "minimum": 0
+    },
+    "BolusCut-offTechnique": {
+      "type": "string",
+      "title": "Bolus Cut-off Technique",
+      "description":
+        "REQUIRED if BolusCut-offFlag True. For PASL (DICOM tag (0018,925E)). Name of the technique used."
+    }
+  },
+
+  "required": [
+    "EchoTime",
+    "MagneticFieldStrength",
+    "RepetitionTime",
+    "PulseSequenceType",
+    "ASLContext",
+    "LabelingDuration",
+    "InitialPostLabelDelay",
+    "LabelingType",
+    "BackgroundSuppression",
+    "VascularCrushing",
+    "M_ZERO"
+  ],
+
+  "if": {
+    "properties": { "BolusCut-offFlag": { "const": true } }
+  },
+  "then": {
+    "dependencies": {
+      "BolusCut-offFlag": [
+        "BolusCut-offTimingSequence",
+        "BolusCut-offDelayTime",
+        "BolusCut-offTechnique"
+      ]
+    }
+  },
+  "if": {
+    "properties": { "VascularCrushing": { "const": true } }
+  },
+  "then": {
+    "dependencies": {
+      "VascularCrushing": ["VascularCrushingVenc"]
+    }
+  }
 }
