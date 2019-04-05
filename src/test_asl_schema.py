@@ -41,10 +41,10 @@ def test_valid_data_all_fields_specified(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_full"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     validator = Draft7Validator(schema=schema)
     valid = validator.is_valid(instance=data)
@@ -64,10 +64,10 @@ def test_valid_data_missing_conditional_field(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_absent_conditional_field"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     validator = Draft7Validator(schema=schema)
     valid = validator.is_valid(instance=data)
@@ -89,10 +89,10 @@ def test_valid_data_conditional_type_array(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_labeling_duration_array"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     validator = Draft7Validator(schema=schema)
     valid = validator.is_valid(instance=data)
@@ -112,10 +112,10 @@ def test_invalid_data_wrong_field_type(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_full"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     # Mess up data so that the validation fails
     # Should be an array let's replace it with an integer
@@ -139,10 +139,10 @@ def test_invalid_data_missing_required_key(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_full"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     # Mess up data so that the validation fails
     # Let's remove a required key
@@ -166,10 +166,10 @@ def test_invalid_data_wrong_type_in_array(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_full"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     # Mess up data so that the validation fails
     # Should be an array of numbers, will put a string in the list
@@ -194,10 +194,10 @@ def test_invalid_data_unexpected_field_value(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_full"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     # Mess up data so that the validation fails
     # Value should be part of an enum, but let's fill in an unexpected value
@@ -221,10 +221,10 @@ def test_invalid_data_wrong_array_size(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_full"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     # Mess up data so that the validation fails
     # Array should have three tuples of two elements each, let's change that
@@ -248,10 +248,10 @@ def test_invalid_data_wrong_internal_array_size(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_full"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     # Mess up data so that the validation fails
     # Array should have three tuples of two elements each, let's change that
@@ -276,10 +276,10 @@ def test_invalid_data_multiple_errors(set_test_variables):
     asl_schema = set_test_variables["asl_schema"]
     asl_valid = set_test_variables["asl_valid_full"]
 
-    with open(asl_schema, "r") as fp:
-        schema = json.load(fp, encoding="utf-8")
-    with open(asl_valid, "r") as fp:
-        data = json.load(fp, encoding="utf-8")
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
 
     # Mess up data so that the validation fails
     # Let's take all examples from the tests above
