@@ -14,7 +14,7 @@
   "InitialPostLabelDelay": 14,
   "BackgroundSuppression": true,
   "VascularCrushing": true,
-  "M_ZERO": "just/a/path/to/M0",
+  "MZERO": "just/a/path/to/M0",
   "MRSoftwareVersion": "1.14",
   "LabelingLocation": "an/url/to/image",
   "LabelingOrientation": [[12, 11], [10, 12], [7, 6]],

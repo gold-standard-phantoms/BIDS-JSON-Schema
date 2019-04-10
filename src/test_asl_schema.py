@@ -47,6 +47,7 @@ def test_valid_data_all_fields_specified(set_test_variables):
         data = json.load(fp)
 
     validator = Draft7Validator(schema=schema)
+    validator.check_schema(schema)
     valid = validator.is_valid(instance=data)
 
     assert valid is True

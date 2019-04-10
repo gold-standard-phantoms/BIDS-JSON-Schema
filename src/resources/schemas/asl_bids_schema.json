@@ -321,27 +321,27 @@
     "LabelingType",
     "BackgroundSuppression",
     "VascularCrushing",
-    "M_ZERO"
+    "MZERO"
   ],
 
-  "if": {
-    "properties": { "BolusCut-offFlag": { "const": true } }
-  },
-  "then": {
-    "dependencies": {
-      "BolusCut-offFlag": [
-        "BolusCut-offTimingSequence",
-        "BolusCut-offDelayTime",
-        "BolusCut-offTechnique"
-      ]
-    }
-  },
-  "if": {
-    "properties": { "VascularCrushing": { "const": true } }
-  },
-  "then": {
-    "dependencies": {
-      "VascularCrushing": ["VascularCrushingVenc"]
-    }
-  }
+  "allOf": [
+  	{
+  		"if": {
+  			"properties": { "BolusCut-offFlag": { "const": true } }
+  		},
+  		"then": {
+  			"dependencies": {
+  				"BolusCut-offFlag": ["BolusCut-offDelayTime", "BolusCut-offTechnique", "BolusCut-offTimingSequence"]
+  			}
+  		}
+  	},
+  	{
+  		"if": {
+  			"properties": { "VascularCrushing": { "const": true } }
+  		},
+  		"then": {
+  			"dependencies": { "VascularCrushing": ["VascularCrushingVenc"] }
+  		}
+  	}
+  ]
 }
