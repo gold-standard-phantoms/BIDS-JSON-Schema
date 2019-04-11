@@ -76,6 +76,34 @@ def test_valid_data_missing_conditional_field(set_test_variables):
     assert valid is True
 
 
+def test_invalid_data_missing_conditional_field(set_test_variables):
+    """
+    :test_id: ASL-SCHEMA-011
+    :req_id: D2N-FUN-REQ-003
+    :description: This test verifies that an invalid structure does not get validated against our schema.
+    :inputs: A dictionary object following largely the structure defined in the asl schema but missing a conditional
+    field, the related field (BolusCut-offFlag) to the condition is set to true so our conditional field
+    (BolusCut-offDelayTime) is mandatory but missing.
+    :criteria: This test is considered passed if the validation method returns False.
+    """
+    asl_schema = set_test_variables["asl_schema"]
+    asl_valid = set_test_variables["asl_valid_absent_conditional_field"]
+
+    with open(asl_schema, "r", encoding="utf-8") as fp:
+        schema = json.load(fp)
+    with open(asl_valid, "r", encoding="utf-8") as fp:
+        data = json.load(fp)
+
+    # mess up data so validation fails
+    # set this key to true and the validator should pick up on the missing conditional field
+    data["BolusCut-offFlag"] = True
+
+    validator = Draft7Validator(schema=schema)
+    valid = validator.is_valid(instance=data)
+
+    assert valid is False
+
+
 def test_valid_data_conditional_type_array(set_test_variables):
     """
     :test_id: ASL-SCHEMA-003
