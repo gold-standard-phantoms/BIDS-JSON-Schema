@@ -30,7 +30,7 @@ def set_test_variables():
 
 def test_valid_data_all_fields_specified(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-001
+    :test_id: ASL-SCHEMA-TEST-001
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that a valid structure following exactly the definition set in the json schema gets
     validated correctly.
@@ -55,7 +55,7 @@ def test_valid_data_all_fields_specified(set_test_variables):
 
 def test_valid_data_missing_conditional_field(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-002
+    :test_id: ASL-SCHEMA-TEST-002
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that a valid structure following the definition set in the json schema gets validated
     correctly.
@@ -78,7 +78,7 @@ def test_valid_data_missing_conditional_field(set_test_variables):
 
 def test_invalid_data_missing_conditional_field(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-011
+    :test_id: ASL-SCHEMA-TEST-011
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema but missing a conditional
@@ -106,7 +106,7 @@ def test_invalid_data_missing_conditional_field(set_test_variables):
 
 def test_valid_data_conditional_type_array(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-003
+    :test_id: ASL-SCHEMA-TEST-003
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that a valid structure following the definition set in the json schema gets
     validated correctly.
@@ -131,7 +131,7 @@ def test_valid_data_conditional_type_array(set_test_variables):
 
 def test_invalid_data_wrong_field_type(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-004
+    :test_id: ASL-SCHEMA-TEST-004
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
@@ -158,7 +158,7 @@ def test_invalid_data_wrong_field_type(set_test_variables):
 
 def test_invalid_data_missing_required_key(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-005
+    :test_id: ASL-SCHEMA-TEST-005
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
@@ -185,7 +185,7 @@ def test_invalid_data_missing_required_key(set_test_variables):
 
 def test_invalid_data_wrong_type_in_array(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-006
+    :test_id: ASL-SCHEMA-TEST-006
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
@@ -212,7 +212,7 @@ def test_invalid_data_wrong_type_in_array(set_test_variables):
 
 def test_invalid_data_unexpected_field_value(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-007
+    :test_id: ASL-SCHEMA-TEST-007
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
@@ -240,7 +240,7 @@ def test_invalid_data_unexpected_field_value(set_test_variables):
 
 def test_invalid_data_wrong_array_size(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-008
+    :test_id: ASL-SCHEMA-TEST-008
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
@@ -267,7 +267,7 @@ def test_invalid_data_wrong_array_size(set_test_variables):
 
 def test_invalid_data_wrong_internal_array_size(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-009
+    :test_id: ASL-SCHEMA-TEST-009
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The 'mistake' here, is that a
@@ -294,7 +294,7 @@ def test_invalid_data_wrong_internal_array_size(set_test_variables):
 
 def test_invalid_data_multiple_errors(set_test_variables):
     """
-    :test_id: ASL-SCHEMA-010
+    :test_id: ASL-SCHEMA-TEST-010
     :req_id: D2N-FUN-REQ-003
     :description: This test verifies that an invalid structure does not get validated against our schema.
     :inputs: A dictionary object following largely the structure defined in the asl schema. The object gathers all the
