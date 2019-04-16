@@ -60,7 +60,7 @@ deploy_production:
   stage: deploy
   script:
     - python3 setup.py sdist bdist bdist_wheel
-    - cat $SSH_REPO_KEY > .id_rsa
+    - echo "$SSH_REPO_KEY" > .id_rsa
     - chmod 600 .id_rsa
     # Only public package should be pushed to the public repo
     # - scp -i .id_rsa dist/* pypi@goldstandardphantoms.com:/var/www/pypi/bids-json-schema

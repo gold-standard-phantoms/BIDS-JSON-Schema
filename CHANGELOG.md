@@ -1,16 +1,7 @@
-# {name} Changelog
+# BIDS JSON Schema Changelog
 
-## MAJOR.MINOR.BUGFIX - DATE
-
-### New
-
-* Create project
-*
+## 0.1.1 - 16/4/19
 
 ### Updated
 
-*
-
-### Removed
-
-*
+* Fix .gitlab-ci.yml build script
