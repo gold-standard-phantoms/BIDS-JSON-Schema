@@ -46,6 +46,17 @@ canary:
     - apt-get update -qq && apt-get install -y -qq tox
     - tox -e canary
 
+unit-test-documentation:
+  stage: test
+  script:
+    - apt-get update -qq && apt-get install -y -qq python3-pip
+    - pip3 install Unit-Test-Documentation==1.0.1 -i https://gsp-archive:fengAmtocdorbotUcJucBofupVefOwElEdTodGhieShmigIntUnlatWysJeanper@private-pypi.goldstandardphantoms.com/
+    - unit-test-documentation directory src bids-json-schema-test-documentation.md
+  artifacts:
+    paths:
+      - bids-json-schema-test-documentation.md
+    expire_in: 0
+
 deploy_development:
   stage: deploy
   script:

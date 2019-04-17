@@ -1,5 +1,7 @@
 -r test.txt
 
+Unit-Test-Documentation==1.0.1
+
 # For making documentation
 pandoc-eqnos
 pandoc-fignos
