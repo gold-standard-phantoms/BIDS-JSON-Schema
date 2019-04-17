@@ -55,7 +55,7 @@ unit-test-documentation:
   artifacts:
     paths:
       - bids-json-schema-test-documentation.md
-    expire_in: 0
+    expire_in: 365 days
 
 deploy_development:
   stage: deploy
